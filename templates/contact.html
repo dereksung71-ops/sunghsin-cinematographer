@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — {{SITE_NAME}}</title>
+<link rel="stylesheet" href="{{ROOT}}assets/css/style.css">
+</head>
+<body>
+
+<div class="contact-bg">
+  <img src="{{CONTACT_IMAGE}}" alt="">
+  <div class="contact-bg-overlay"></div>
+</div>
+
+<a class="site-brand" href="{{ROOT}}index.html">{{SITE_NAME}}</a>
+
+<nav class="corner-nav">
+  <a href="{{ROOT}}index.html">Home</a>
+  <a href="{{ROOT}}selected-works/index.html">Selected Work</a>
+</nav>
+
+<div class="contact">
+  <ul class="contact-links">
+{{CONTACT_LINKS_HTML}}
+  </ul>
+</div>
+
+</body>
+</html>

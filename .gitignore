@@ -1,0 +1,6 @@
+dist/
+.vercel/
+.claude/
+.DS_Store
+# 15MB original; the site uses the web-sized background.jpg next to it
+assets/images/contact/photo_1.jpg

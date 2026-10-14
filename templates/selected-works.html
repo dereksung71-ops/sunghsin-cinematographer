@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selected Work — {{SITE_NAME}}</title>
+<link rel="stylesheet" href="{{ROOT}}assets/css/style.css">
+{{HEAD_EXTRA}}
+</head>
+<body>
+
+<a class="site-brand" href="{{ROOT}}index.html">{{SITE_NAME}}</a>
+
+<nav class="corner-nav corner-nav--cta">
+  <a href="{{ROOT}}contact/index.html">Contact Sung Hsin</a>
+</nav>
+
+<div class="works">
+  <div class="works-list">
+{{WORKS_LIST}}
+  </div>
+
+  <div class="works-preview" id="works-preview">
+    <div class="preview-empty" id="preview-empty">Put your finger on a project to peek</div>
+{{PREVIEW_ELEMENTS}}
+  </div>
+</div>
+
+{{VIMEO_SCRIPTS}}
+<script src="{{ROOT}}assets/js/works.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "siteName": "Sung Hsin / Cinematographer",
+  "home": {
+    "video": "/assets/videos/home/hero.mp4",
+    "poster": "/assets/images/home/hero-poster.jpg",
+    "vimeo": "1235832245",
+    "vimeoAspect": 1.7778
+  },
+  "contact": {
+    "image": "/assets/images/contact/background.jpg",
+    "email": "dereksung71@gmail.com",
+    "instagram": {
+      "url": "https://www.instagram.com/sunghsin_71/",
+      "handle": "@sunghsin_71"
+    }
+  }
+}

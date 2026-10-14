@@ -1,0 +1,511 @@
+/* ---------------------------------------------------------------
+   Portfolio site — global styles
+   Black background, minimal type, thin all-caps labels, generous
+   whitespace. No color, no decoration — content carries the weight.
+----------------------------------------------------------------- */
+
+:root {
+  --bg: #000000;
+  --fg: #ffffff;
+  --fg-dim: rgba(255, 255, 255, 0.42);
+  --fg-dimmer: rgba(255, 255, 255, 0.28);
+  --border-accent: #ffffff;
+  --gap: 2px;
+  --font: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --tracking: 0.12em;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg-dim);
+  font-family: var(--font);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul, ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+img, video {
+  display: block;
+  max-width: 100%;
+}
+
+/* -------------------- shared label style -------------------- */
+
+.label {
+  font-size: 11px;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+/* -------------------- corner nav (right edge, vertically centered) -------------------- */
+
+.corner-nav {
+  position: fixed;
+  top: 0;
+  right: 40px;
+  height: 100vh;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 18px;
+}
+
+.corner-nav a {
+  font-size: 11px;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  padding-left: 10px;
+  border-left: 2px solid transparent;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.corner-nav a:hover,
+.corner-nav a.is-active {
+  color: var(--fg);
+  border-left-color: var(--border-accent);
+}
+
+/* -------------------- site brand (top-right, links home) -------------------- */
+
+.site-brand {
+  position: fixed;
+  top: 32px;
+  right: 40px;
+  z-index: 30;
+  font-size: 11px;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  transition: color 0.25s ease;
+}
+
+.site-brand:hover,
+.site-brand:focus-visible {
+  color: var(--fg);
+}
+
+.corner-nav--cta a {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--fg);
+  padding-left: 12px;
+}
+
+/* -------------------- HOME -------------------- */
+
+.home {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.home-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-nav {
+  position: fixed;
+  top: 0;
+  right: 40px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 18px;
+  z-index: 10;
+}
+
+.home-nav .home-name {
+  font-size: 11px;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+.home-nav .home-link {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg);
+  padding-left: 12px;
+  border-left: 2px solid transparent;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.home-nav .home-link:hover,
+.home-nav .home-link:focus-visible {
+  color: var(--fg);
+  border-left-color: var(--border-accent);
+}
+
+/* -------------------- Vimeo embeds -------------------- */
+
+.vimeo-auto {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.vimeo-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 0;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.vimeo-frame.is-playing {
+  opacity: 1;
+}
+
+/* Full-bleed: fills the box and crops the overflow (home hero, hover preview). */
+.vimeo-cover .vimeo-frame {
+  width: max(100vw, calc(100vh * var(--ar)));
+  height: max(100vh, calc(100vw / var(--ar)));
+}
+
+/* Whole frame visible, never cropped (project-page trailer). */
+.vimeo-contain .vimeo-frame {
+  width: min(100vw, calc(var(--hero-h) * var(--ar)));
+  height: min(var(--hero-h), calc(100vw / var(--ar)));
+}
+
+.vimeo-poster,
+.vimeo-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vimeo-contain .vimeo-poster {
+  object-fit: contain;
+}
+
+/* -------------------- SELECTED WORKS -------------------- */
+
+.works {
+  display: flex;
+  min-height: 100vh;
+}
+
+.works-list {
+  position: relative;
+  z-index: 1;
+  width: 30%;
+  min-width: 260px;
+  padding: 120px 48px 64px 48px;
+}
+
+/* Tree: category = parent label, film titles = children hanging off a thin line. */
+.works-group {
+  margin-bottom: 44px;
+}
+
+.works-group:last-child {
+  margin-bottom: 0;
+}
+
+.works-group-label {
+  margin: 0 0 12px 0;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+}
+
+.works-list ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-left: 3px;
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.works-list li a {
+  display: block;
+  margin-left: -1px;
+  padding: 4px 0 4px 20px;
+  border-left: 2px solid transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.works-list li a:hover,
+.works-list li a:focus-visible,
+.works-list li a.is-active {
+  color: var(--fg);
+  border-left-color: var(--border-accent);
+}
+
+/* Preview: a dimmed full-bleed video fixed behind the list. Always in
+   view — never pushed below the fold. */
+.works-preview {
+  --preview-opacity: 0.5;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.works-preview video,
+.works-preview img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.works-preview video.is-active,
+.works-preview img.is-active {
+  opacity: var(--preview-opacity);
+}
+
+.works-preview .preview-vimeo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.works-preview .preview-vimeo.is-active {
+  opacity: var(--preview-opacity);
+}
+
+.works-preview .preview-vimeo img,
+.works-preview .preview-vimeo video {
+  opacity: 1;
+}
+
+.works-preview .preview-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 860px) {
+  .works-list {
+    padding: 96px 24px 32px 24px;
+  }
+}
+
+
+/* -------------------- PROJECT PAGE -------------------- */
+
+.project-hero {
+  --hero-h: 92vh;
+  position: relative;
+  width: 100%;
+  height: var(--hero-h);
+  background: #050505;
+  overflow: hidden;
+}
+
+.project-hero video,
+.project-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Fills the container with a 16:9 iframe (YouTube trailers), cropping
+   overflow the same way object-fit: cover does for <video>. */
+.video-embed-cover {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.video-embed-cover iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 177.78vh;
+  height: 56.25vw;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  border: none;
+  pointer-events: none;
+}
+
+.project-intro {
+  max-width: 640px;
+  padding: 56px 48px 0 48px;
+}
+
+.project-intro p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--fg-dim);
+}
+
+.project-credits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding: 40px 48px;
+  font-size: 11px;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  color: var(--fg-dimmer);
+}
+
+.project-credits .credit dt {
+  color: var(--fg-dimmer);
+  font-size: 9px;
+  margin-bottom: 4px;
+}
+
+.project-credits .credit dd {
+  margin: 0;
+  color: var(--fg-dim);
+}
+
+.stills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap);
+  padding: 0 var(--gap) 64px var(--gap);
+}
+
+.stills-grid .still {
+  flex-grow: 1;
+  position: relative;
+  min-width: 240px;
+}
+
+.stills-grid .still img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 700px) {
+  .stills-grid .still {
+    flex-basis: 100% !important;
+    flex-grow: 0;
+  }
+  .project-hero {
+    --hero-h: 60vh;
+  }
+}
+
+/* -------------------- CONTACT -------------------- */
+
+.contact-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  background: #000;
+}
+
+.contact-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.contact-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.contact {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 24px;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  text-shadow: 0 0 14px rgba(0, 0, 0, 0.55);
+}
+
+.contact-links li {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contact-label {
+  font-size: 11px;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.contact-links a {
+  align-self: flex-start;
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  color: var(--fg);
+  padding-left: 14px;
+  border-left: 2px solid transparent;
+  transition: border-color 0.25s ease;
+}
+
+.contact-links a:hover,
+.contact-links a:focus-visible {
+  border-left-color: var(--border-accent);
+}
