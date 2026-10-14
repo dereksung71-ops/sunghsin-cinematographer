@@ -135,12 +135,23 @@ python3 serve.py
 
 then open http://localhost:8000.
 
-## Deploying
+## Live site (GitHub Pages)
 
-It's a plain static site: run `python3 build.py` and publish the `dist/`
-folder, or connect the GitHub repo to Vercel/Netlify — `vercel.json`
-already sets the build command (`python3 build.py`) and output folder
-(`dist`). No environment variables or server code are needed.
+**https://dereksung71-ops.github.io/sunghsin-portfolio/**
+
+Source: https://github.com/dereksung71-ops/sunghsin-portfolio (public).
+Every push to the `main` branch triggers `.github/workflows/pages.yml`,
+which runs `python3 build.py` on GitHub's servers and publishes `dist/`
+(takes about 2–3 minutes; progress under the repo's *Actions* tab).
+
+To publish a change: edit files, then `git add -A`, `git commit`,
+`git push` (or ask Claude to). The first publish uploaded ~700MB; later
+pushes only upload what changed.
+
+GitHub Pages limits: published site under 1GB (currently ~640MB), about
+100GB bandwidth per month, single files under 100MB. Once the Vimeo
+trailers are trusted, deleting the local copies of the films that use them
+(see the Vimeo section) makes the site and every upload much smaller.
 
 Heads-up: GitHub rejects files over 100MB, and the repo currently holds
 about 470MB of media. `ILY` (99MB) and `Corona` (95MB) trailers are right
