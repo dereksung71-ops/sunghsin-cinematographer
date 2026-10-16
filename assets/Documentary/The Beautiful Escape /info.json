@@ -1,11 +1,12 @@
 {
   "role": "Cinematographer",
-  "director": "",
+  "director": "Sung Hsin",
   "client": "",
   "year": "",
   "format": "Short / Digital",
   "intro": "",
   "order": 1,
   "vimeo": "1235855874",
-  "vimeoAspect": 1.8498
+  "vimeoAspect": 1.8498,
+  "directorZh": "宋訢"
 }

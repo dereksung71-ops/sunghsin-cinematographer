@@ -47,6 +47,42 @@ assets/
   playing before the whole file has downloaded.
 - The Selected Works hover-preview uses the first still as the poster.
 
+### Chinese / English
+
+The site is bilingual: short labels (categories, navigation, credit
+fields, festival and award names) always show a small Chinese companion;
+long text (the film intros) follows the **EN / 中** switch at the top right. The choice is
+remembered; first visit follows the browser language. Add `?lang=zh` to any
+link to open it in Chinese.
+
+- UI words, category names, roles and formats live in `data/i18n.json`
+  (edit the Chinese there; add a new role/format and it shows up everywhere).
+- Per film, in `info.json`: `"titleZh"` (Chinese title, shown under the
+  title and beside it in the list), `"directorZh"` (Chinese name shown next
+  to the director's name), `"introZh"` (Chinese intro; falls back to the
+  English if missing), and `"awards"`.
+- The director is shown large under the title; a film whose role is
+  "Director" and has no `"director"` shows Sung Hsin as its director.
+
+- `"onFilm": true` adds a **[Film 底片拍攝]** marker before the title in the
+  Selected Works list (currently Existence, As I Saw Her, Sound of Wheel).
+- On the home page the Chinese is set at about 0.78× the English size so the
+  glyphs are as tall as the English capitals (a Chinese character at the same
+  font-size looks about 1.4× taller).
+
+### Festivals & awards
+
+```json
+"awards": [
+  { "status": "winner", "year": 2025,
+    "festival": { "zh": "金穗獎", "en": "Golden Harvest Awards" },
+    "detail":   { "zh": "最佳學生劇情片", "en": "Best Student Fiction Film" } }
+]
+```
+
+`status` is `winner` (榮獲, marked with a white bar), `selection` (入圍) or
+`screening` (放映). `detail` is optional. Listed in the order written.
+
 ### Vimeo instead of a local file
 
 Add the video's Vimeo id (the number in `vimeo.com/<id>`) to the film's
@@ -137,9 +173,9 @@ then open http://localhost:8000.
 
 ## Live site (GitHub Pages)
 
-**https://dereksung71-ops.github.io/sunghsin-portfolio/**
+**https://dereksung71-ops.github.io/sunghsin-cinematographer/**
 
-Source: https://github.com/dereksung71-ops/sunghsin-portfolio (public).
+Source: https://github.com/dereksung71-ops/sunghsin-cinematographer (public).
 Every push to the `main` branch triggers `.github/workflows/pages.yml`,
 which runs `python3 build.py` on GitHub's servers and publishes `dist/`
 (takes about 2–3 minutes; progress under the repo's *Actions* tab).

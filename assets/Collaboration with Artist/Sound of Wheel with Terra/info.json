@@ -7,5 +7,7 @@
   "intro": "Documentary of the making of pottery artwork.",
   "order": 2,
   "vimeo": "1235852764",
-  "vimeoAspect": 1.7778
+  "vimeoAspect": 1.7778,
+  "introZh": "陶藝作品製作過程的紀錄。",
+  "onFilm": true
 }

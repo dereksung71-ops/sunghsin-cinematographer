@@ -91,22 +91,112 @@ img, video {
 
 /* -------------------- site brand (top-right, links home) -------------------- */
 
-.site-brand {
+.site-top {
   position: fixed;
   top: 32px;
   right: 40px;
   z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 22px;
   font-size: 11px;
   letter-spacing: var(--tracking);
   text-transform: uppercase;
-  color: var(--fg-dim);
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.site-brand {
+  color: var(--fg-dim);
   transition: color 0.25s ease;
 }
 
 .site-brand:hover,
 .site-brand:focus-visible {
   color: var(--fg);
+}
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  color: var(--fg-dimmer);
+}
+
+.lang-switch button {
+  margin: 0;
+  padding: 0 0 2px;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  font: inherit;
+  letter-spacing: 0.08em;
+  color: var(--fg-dim);
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.lang-switch button:hover,
+.lang-switch button:focus-visible {
+  color: var(--fg);
+}
+
+html:not([data-lang]) .lang-switch [data-set-lang="en"],
+html[data-lang="en"] .lang-switch [data-set-lang="en"],
+html[data-lang="zh"] .lang-switch [data-set-lang="zh"] {
+  color: var(--fg);
+  border-bottom-color: var(--fg);
+}
+
+/* -------------------- Bilingual text --------------------
+   Short labels carry a small Chinese companion (.zh-sub) that is always shown.
+   Long text exists in both languages and follows the EN / 中 switch. */
+
+.zh-sub {
+  margin-left: 0.55em;
+  font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  font-weight: 300;
+  font-size: max(11px, 0.95em);
+  letter-spacing: 0.06em;
+  text-transform: none;
+  white-space: nowrap;
+  opacity: 0.82;
+}
+
+.t-zh {
+  display: none;
+  font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+html[data-lang="zh"] .t-zh {
+  display: inline;
+}
+
+html[data-lang="zh"] .t-en {
+  display: none;
+}
+
+.home-link .zh-sub,
+.corner-nav--cta .zh-sub {
+  font-size: 0.72em;
+  font-weight: 400;
+}
+
+.home-nav .zh-sub {
+  margin-left: 0.6em;
+  font-size: 0.78em;
+  font-weight: inherit;
+  letter-spacing: 0.08em;
+  opacity: 1;
+}
+
+.lang-switch [data-set-lang="zh"] {
+  font-size: 0.87em;
+}
+
+.corner-nav a {
+  white-space: nowrap;
 }
 
 .corner-nav--cta a {
@@ -148,10 +238,32 @@ img, video {
 }
 
 .home-nav .home-name {
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: var(--tracking);
   text-transform: uppercase;
-  color: var(--fg-dim);
+  color: rgba(255, 255, 255, 0.78);
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.75);
+}
+
+/* Home: a soft shade behind the top-right language switch so it reads over any footage */
+.site-top--home::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 110px;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+}
+
+.site-top--home .lang-switch button {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.site-top--home .lang-switch button[data-set-lang] {
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
 }
 
 .home-nav .home-link {
@@ -229,7 +341,7 @@ img, video {
 .works-list {
   position: relative;
   z-index: 1;
-  width: 30%;
+  width: 34%;
   min-width: 260px;
   padding: 120px 48px 64px 48px;
 }
@@ -269,6 +381,14 @@ img, video {
   letter-spacing: 0.04em;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.work-tag {
+  margin-right: 0.8em;
+  font-size: 0.85em;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  opacity: 0.7;
 }
 
 .works-list li a:hover,
@@ -380,23 +500,56 @@ img, video {
   pointer-events: none;
 }
 
-.project-intro {
-  max-width: 640px;
-  padding: 56px 48px 0 48px;
+.project-info {
+  display: grid;
+  grid-template-columns: minmax(240px, 30%) 1fr;
+  gap: 56px 64px;
+  padding: 64px 48px 56px;
 }
 
-.project-intro p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--fg-dim);
+.project-title {
+  margin: 0 0 28px;
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+}
+
+.project-title .zh-sub {
+  display: block;
+  margin: 10px 0 0;
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
+
+.project-director {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 32px;
+}
+
+.project-director-label {
+  font-size: 10px;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  color: var(--fg-dimmer);
+}
+
+.project-director-name {
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--fg);
 }
 
 .project-credits {
   display: flex;
-  flex-wrap: wrap;
-  gap: 32px;
-  padding: 40px 48px;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
   font-size: 11px;
   letter-spacing: var(--tracking);
   text-transform: uppercase;
@@ -404,14 +557,106 @@ img, video {
 }
 
 .project-credits .credit dt {
-  color: var(--fg-dimmer);
-  font-size: 9px;
   margin-bottom: 4px;
+  font-size: 9px;
+  color: var(--fg-dimmer);
 }
 
 .project-credits .credit dd {
   margin: 0;
   color: var(--fg-dim);
+}
+
+.project-story {
+  max-width: 720px;
+}
+
+.project-intro-text {
+  margin: 0 0 52px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--fg-dim);
+}
+
+html[data-lang="zh"] .project-intro-text {
+  line-height: 1.95;
+}
+
+.project-intro-text:last-child {
+  margin-bottom: 0;
+}
+
+.project-awards-title {
+  margin: 0 0 18px;
+  font-weight: 400;
+  color: var(--fg-dimmer);
+}
+
+.project-awards ul {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 18px 0 0;
+  list-style: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.award {
+  display: grid;
+  grid-template-columns: 210px 44px 1fr;
+  gap: 0 16px;
+  align-items: baseline;
+  padding: 4px 0 4px 14px;
+  border-left: 2px solid transparent;
+}
+
+.award-winner {
+  border-left-color: var(--border-accent);
+}
+
+.award-status {
+  white-space: nowrap;
+  font-size: 10px;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  color: var(--fg-dimmer);
+}
+
+.award-winner .award-status {
+  color: var(--fg);
+}
+
+.award-year {
+  font-size: 13px;
+  color: var(--fg-dim);
+}
+
+.award-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.award-festival {
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+}
+
+.award-detail {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--fg-dim);
+}
+
+.award-detail:empty {
+  display: none;
+}
+
+/* A wrapped Chinese companion should start flush with the line above it */
+.award-body .zh-sub {
+  margin-left: 0.2em;
 }
 
 .stills-grid {
@@ -508,4 +753,190 @@ img, video {
 .contact-links a:hover,
 .contact-links a:focus-visible {
   border-left-color: var(--border-accent);
+}
+
+/* -------------------- Phones (<= 700px) --------------------
+   Nothing floats over the content here: the site name scrolls away with the
+   page, and navigation sits in a bar at the bottom edge (thumb reach). */
+
+@media (max-width: 700px) {
+  .site-top {
+    position: absolute;
+    top: 22px;
+    left: 24px;
+    right: 24px;
+    justify-content: space-between;
+    gap: 14px;
+    letter-spacing: 0.08em;
+  }
+
+  .site-top--home {
+    justify-content: flex-end;
+  }
+
+  .site-brand {
+    min-width: 0;
+    line-height: 1.6;
+  }
+
+  .corner-nav {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: auto;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 28px 16px calc(16px + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 40%, rgba(0, 0, 0, 0));
+  }
+
+  .corner-nav {
+    gap: 16px;
+  }
+
+  .corner-nav a {
+    padding: 8px 0;
+    border-left: 0;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+  }
+
+  .corner-nav--cta a {
+    font-size: 15px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Home: bottom-left, within thumb reach, readable over bright footage */
+  .home-nav {
+    top: auto;
+    right: 24px;
+    bottom: 0;
+    left: 24px;
+    height: auto;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding-bottom: 14vh;
+  }
+
+  .home-nav .home-name,
+  .home-nav .home-link {
+    text-shadow: 0 0 14px rgba(0, 0, 0, 0.75);
+  }
+
+  .home-nav .home-name {
+    padding-left: 12px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  .home-nav .home-link {
+    font-size: 18px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  /* Selected Works: finger-sized rows; the hint sits above the bottom bar */
+  .works-list {
+    width: 100%;
+    min-width: 0;
+    padding: 108px 24px 130px;
+  }
+
+  .works-group {
+    margin-bottom: 32px;
+  }
+
+  .works-group-label {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+  }
+
+  .works-list ul {
+    gap: 0;
+  }
+
+  .works-list li a {
+    padding: 10px 0 10px 20px;
+  }
+
+  .works-preview .preview-empty {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 58px 24px 0;
+    text-align: left;
+    font-size: 11px;
+  }
+
+  /* Film pages: the trailer takes exactly the height of its picture */
+  .project-hero {
+    --hero-h: auto;
+    height: auto;
+    padding-top: 64px;
+    background: #000;
+  }
+
+  .project-hero .vimeo-hero {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    aspect-ratio: var(--ar);
+  }
+
+  .vimeo-contain .vimeo-frame {
+    width: 100%;
+    height: 100%;
+  }
+
+  .project-hero > video,
+  .project-hero > img {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .project-info {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 40px 24px 32px;
+  }
+
+  .project-title {
+    margin-bottom: 22px;
+    font-size: 26px;
+  }
+
+  .project-director-name {
+    font-size: 20px;
+  }
+
+  .project-credits {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 22px 28px;
+  }
+
+  .award {
+    grid-template-columns: auto 1fr;
+    gap: 6px 14px;
+  }
+
+  .award-body {
+    grid-column: 1 / -1;
+  }
+
+  .stills-grid {
+    padding-bottom: 120px;
+  }
+
+  /* Contact: clear of the bottom bar */
+  .contact {
+    padding: 96px 24px 130px;
+  }
+
+  .contact-links a {
+    font-size: 20px;
+    overflow-wrap: anywhere;
+  }
 }

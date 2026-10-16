@@ -4,15 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Selected Work — {{SITE_NAME}}</title>
+{{LANG_BOOT}}
 <link rel="stylesheet" href="{{ROOT}}assets/css/style.css">
 {{HEAD_EXTRA}}
 </head>
 <body>
 
-<a class="site-brand" href="{{ROOT}}index.html">{{SITE_NAME}}</a>
+<div class="site-top"><a class="site-brand" href="{{ROOT}}index.html">{{BRAND_HTML}}</a>{{LANG_SWITCH}}</div>
 
 <nav class="corner-nav corner-nav--cta">
-  <a href="{{ROOT}}contact/index.html">Contact Sung Hsin</a>
+  <a href="{{ROOT}}contact/index.html">{{NAV_CONTACT_CTA}}</a>
 </nav>
 
 <div class="works">
@@ -21,12 +22,13 @@
   </div>
 
   <div class="works-preview" id="works-preview">
-    <div class="preview-empty" id="preview-empty">Put your finger on a project to peek</div>
+    <div class="preview-empty" id="preview-empty">{{HINT_HTML}}</div>
 {{PREVIEW_ELEMENTS}}
   </div>
 </div>
 
 {{VIMEO_SCRIPTS}}
+<script src="{{ROOT}}assets/js/lang.js"></script>
 <script src="{{ROOT}}assets/js/works.js"></script>
 </body>
 </html>

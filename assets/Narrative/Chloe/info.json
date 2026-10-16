@@ -7,5 +7,33 @@
   "intro": "Revenge of the angry girl who's been through heartbreaks.",
   "order": 2,
   "vimeo": "1235832333",
-  "vimeoAspect": 1.7778
+  "vimeoAspect": 1.7778,
+  "titleZh": "寂寞克柔伊",
+  "introZh": "一個歷經多次心碎的憤怒女孩的復仇。",
+  "awards": [
+    {
+      "status": "screening",
+      "year": 2024,
+      "festival": {
+        "zh": "克萊蒙費虹短片影展",
+        "en": "Clermont-Ferrand International Short Film Festival"
+      },
+      "detail": {
+        "zh": "Bloody Girl 特別單元",
+        "en": "\"Bloody Girl\" special programme"
+      }
+    },
+    {
+      "status": "winner",
+      "year": 2024,
+      "festival": {
+        "zh": "金穗獎",
+        "en": "Golden Harvest Awards"
+      },
+      "detail": {
+        "zh": "社群名人推薦獎",
+        "en": "Social Media Influencer Recommendation Award"
+      }
+    }
+  ]
 }

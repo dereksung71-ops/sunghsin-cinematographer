@@ -1,0 +1,108 @@
+{
+  "person": {
+    "name": "Sung Hsin",
+    "nameZh": "宋訢",
+    "role": "Cinematographer",
+    "roleZh": "攝影"
+  },
+  "ui": {
+    "home": [
+      "Home",
+      "首頁"
+    ],
+    "selectedWork": [
+      "Selected Work",
+      "作品"
+    ],
+    "contact": [
+      "Contact",
+      "聯絡"
+    ],
+    "seeSelectedWork": [
+      "See Selected Work",
+      "瀏覽作品"
+    ],
+    "contactCta": [
+      "Contact Sung Hsin",
+      "聯絡宋訢"
+    ],
+    "email": [
+      "Email",
+      "電子郵件"
+    ],
+    "instagram": [
+      "Instagram",
+      ""
+    ],
+    "festivals": [
+      "Festivals & Awards",
+      "影展與獎項"
+    ],
+    "winner": [
+      "Winner",
+      "榮獲"
+    ],
+    "selection": [
+      "Official Selection",
+      "入圍"
+    ],
+    "screening": [
+      "Screening",
+      "放映"
+    ],
+    "hint": [
+      "Put your finger on a project to peek",
+      ""
+    ],
+    "onFilm": [
+      "Film",
+      "底片拍攝"
+    ]
+  },
+  "credits": {
+    "role": [
+      "Role",
+      "職務"
+    ],
+    "director": [
+      "Directed by",
+      "導演"
+    ],
+    "client": [
+      "Client",
+      "客戶"
+    ],
+    "year": [
+      "Year",
+      "年份"
+    ],
+    "format": [
+      "Format",
+      "類型"
+    ]
+  },
+  "categories": {
+    "narrative": "劇情片",
+    "documentary": "紀錄片",
+    "ads for brands": "品牌廣告",
+    "collaboration with artist": "藝術家合作"
+  },
+  "roles": {
+    "Cinematographer": "攝影",
+    "Director": "導演"
+  },
+  "formats": {
+    "Short": "短片",
+    "Fiction Short": "劇情短片",
+    "Documentary Short": "紀錄短片",
+    "Digital": "數位",
+    "16mm Film": "16mm 底片",
+    "35mm Film": "35mm 底片",
+    "Music Video": "音樂錄影帶",
+    "Brand Video": "品牌影片",
+    "Commercial": "商業廣告",
+    "Youtube Ad": "YouTube 廣告",
+    "IG Ad": "IG 廣告",
+    "Social Content": "社群內容"
+  }
+}

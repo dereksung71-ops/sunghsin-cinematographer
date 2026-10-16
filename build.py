@@ -45,20 +45,78 @@ CATEGORY_ORDER = ["narrative", "documentary", "ads for brands", "collaboration w
 VIDEO_TYPES = {".mp4": "video/mp4", ".m4v": "video/mp4", ".webm": "video/webm", ".mov": "video/mp4"}
 IMAGE_EXTS = {".jpg", ".jpeg", ".png"}
 
-CREDIT_FIELDS = [
-    ("role", "Role"),
-    ("director", "Directed by"),
-    ("client", "Client"),
-    ("year", "Year"),
-    ("format", "Format"),
-]
+CREDIT_FIELDS = ["role", "client", "year", "format"]  # the director has its own block
 
 esc = html.escape
+
+# Sets <html data-lang> before first paint: ?lang=zh|en, else the saved choice,
+# else the browser's language (any zh-* means Chinese).
+LANG_BOOT = (
+    "<script>(function(){try{var q=new URLSearchParams(location.search).get('lang');"
+    "var l=(q==='zh'||q==='en')?q:localStorage.getItem('lang');"
+    "if(!l){l=(navigator.language||'').toLowerCase().indexOf('zh')===0?'zh':'en'}"
+    "document.documentElement.setAttribute('data-lang',l);"
+    "document.documentElement.lang=l==='zh'?'zh-Hant':'en'}catch(e){}})();</script>"
+)
+LANG_SWITCH = (
+    '<div class="lang-switch" role="group" aria-label="Language">'
+    '<button type="button" data-set-lang="en">EN</button><span aria-hidden="true">/</span>'
+    '<button type="button" data-set-lang="zh" lang="zh-Hant">中</button></div>'
+)
 
 
 def load_json(path):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
+
+
+I18N = load_json(DATA_DIR / "i18n.json")
+
+
+def zh_sub(zh):
+    """Small Chinese text that follows an English label, always visible."""
+    return ' <span class="zh-sub" lang="zh-Hant">{}</span>'.format(esc(zh)) if zh else ""
+
+
+def bi(pair):
+    en, zh = pair
+    return esc(en) + zh_sub(zh)
+
+
+def texts(en, zh=None, fallback=True):
+    """Long text that switches with the language toggle. A missing Chinese
+    version falls back to the English (unless fallback=False: Chinese mode then
+    shows nothing, as for the hover hint)."""
+    en, zh = (en or "").strip(), (zh or "").strip()
+    if en and zh:
+        return ('<span class="t-en" lang="en">{}</span>'
+                '<span class="t-zh" lang="zh-Hant">{}</span>').format(esc(en), esc(zh))
+    if en:
+        cls = "t-any" if fallback else "t-en"
+        return '<span class="{}" lang="en">{}</span>'.format(cls, esc(en))
+    if zh:
+        return '<span class="t-zh" lang="zh-Hant">{}</span>'.format(esc(zh))
+    return ""
+
+
+def brand_html():
+    p = I18N["person"]
+    return "{}{} / {}{}".format(esc(p["name"]), zh_sub(p["nameZh"]), esc(p["role"]), zh_sub(p["roleZh"]))
+
+
+def global_tokens():
+    ui = I18N["ui"]
+    return {
+        "LANG_BOOT": LANG_BOOT,
+        "LANG_SWITCH": LANG_SWITCH,
+        "BRAND_HTML": brand_html(),
+        "NAV_HOME": bi(ui["home"]),
+        "NAV_WORKS": bi(ui["selectedWork"]),
+        "NAV_CONTACT": bi(ui["contact"]),
+        "NAV_SEE_WORKS": bi(ui["seeSelectedWork"]),
+        "NAV_CONTACT_CTA": bi(ui["contactCta"]),
+        "HINT_HTML": texts(ui["hint"][0], ui["hint"][1], fallback=False),
+    }
 
 
 def natural_key(name):
@@ -337,7 +395,9 @@ def publish_media(project):
 
 def render(template_name, tokens):
     text = (TEMPLATES_DIR / template_name).read_text(encoding="utf-8")
-    for key, value in tokens.items():
+    merged = dict(global_tokens())
+    merged.update(tokens)
+    for key, value in merged.items():
         text = text.replace("{{" + key + "}}", value)
     return text
 
@@ -355,23 +415,31 @@ def group_by_category(projects):
         groups[-1][2].append(p)
     for _, _, members in groups:
         members.sort(key=lambda p: (p["order"], -p["year"], p["title"].lower()))
-    return [(label, members) for _, label, members in groups]
+    return [(label, members, key.lower()) for key, label, members in groups]
+
+
+def film_tag(info):
+    """[Film 底片拍攝] marker for work shot on film ("onFilm": true in info.json)."""
+    if not info.get("onFilm"):
+        return ""
+    return '<span class="work-tag">[{}]</span>'.format(bi(I18N["ui"]["onFilm"]))
 
 
 def build_works_list(projects, root):
     blocks = []
-    for label, members in group_by_category(projects):
+    for label, members, key in group_by_category(projects):
         items = [
-            '        <li><a href="{root}{slug}/index.html" data-slug="{slug}">{title}</a></li>'.format(
-                root=root, slug=p["slug"], title=esc(p["title"])
+            '        <li><a href="{root}{slug}/index.html" data-slug="{slug}">{tag}{title}{zh}</a></li>'.format(
+                root=root, slug=p["slug"], tag=film_tag(p["info"]), title=esc(p["title"]),
+                zh=zh_sub(p["info"].get("titleZh"))
             )
             for p in members
         ]
         blocks.append(
             '      <div class="works-group">\n'
-            '        <h2 class="works-group-label label">{label}</h2>\n'
+            '        <h2 class="works-group-label label">{label}{zh}</h2>\n'
             '        <ul>\n{items}\n        </ul>\n'
-            "      </div>".format(label=esc(label), items="\n".join(items))
+            "      </div>".format(label=esc(label), zh=zh_sub(I18N["categories"].get(key)), items="\n".join(items))
         )
     return "\n".join(blocks)
 
@@ -393,7 +461,7 @@ def poster_img(poster, root):
 
 def build_preview_elements(projects, root):
     els = []
-    for label, members in group_by_category(projects):
+    for label, members, key in group_by_category(projects):
         for p in members:
             if p["vimeo"]:
                 els.append(
@@ -466,21 +534,96 @@ def vimeo_page_extras(root, used):
     return head, '<script src="{}assets/js/vimeo.js"></script>'.format(root)
 
 
-def build_intro_html(intro_text):
-    if not intro_text:
+def credit_value(key, value):
+    if key == "role":
+        return esc(value) + zh_sub(I18N["roles"].get(value))
+    if key == "format":
+        parts = [x.strip() for x in value.split("/") if x.strip()]
+        return " / ".join(esc(x) + zh_sub(I18N["formats"].get(x)) for x in parts)
+    return esc(value)
+
+
+def build_director_html(info):
+    name = str(info.get("director", "")).strip()
+    if name:
+        who = esc(name) + zh_sub(info.get("directorZh"))
+    elif str(info.get("role", "")).strip().lower() == "director":
+        who = esc(I18N["person"]["name"]) + zh_sub(I18N["person"]["nameZh"])
+    else:
         return ""
-    return '<div class="project-intro"><p>{}</p></div>'.format(esc(intro_text))
+    return (
+        '<div class="project-director"><span class="project-director-label">{}</span>'
+        '<span class="project-director-name">{}</span></div>'.format(bi(I18N["credits"]["director"]), who)
+    )
+
+
+def pair_html(d):
+    """English text followed by its Chinese companion (either may be missing)."""
+    en = str((d or {}).get("en", "")).strip()
+    zh = str((d or {}).get("zh", "")).strip()
+    return esc(en) + zh_sub(zh) if en else esc(zh)
+
+
+def build_awards_html(awards):
+    if not awards:
+        return ""
+    items = []
+    for a in awards:
+        status = a.get("status", "selection")
+        items.append(
+            '    <li class="award award-{status}">'
+            '<span class="award-status">{label}</span>'
+            '<span class="award-year">{year}</span>'
+            '<span class="award-body"><span class="award-festival">{festival}</span>'
+            '<span class="award-detail">{detail}</span></span></li>'.format(
+                status=esc(status),
+                label=bi(I18N["ui"].get(status, I18N["ui"]["selection"])),
+                year=esc(str(a.get("year", ""))),
+                festival=pair_html(a.get("festival")),
+                detail=pair_html(a.get("detail")),
+            )
+        )
+    return (
+        '<section class="project-awards">\n'
+        '  <h2 class="project-awards-title label">{}</h2>\n  <ul>\n{}\n  </ul>\n</section>'.format(
+            bi(I18N["ui"]["festivals"]), "\n".join(items)
+        )
+    )
+
+
+def build_info_html(p):
+    info = p["info"]
+    meta = [
+        '<h1 class="project-title">{}{}</h1>'.format(esc(p["title"]), zh_sub(info.get("titleZh"))),
+        build_director_html(info),
+        build_credits_html(info),
+    ]
+    story = []
+    intro = texts(info.get("intro"), info.get("introZh"))
+    if intro:
+        story.append('<p class="project-intro-text">{}</p>'.format(intro))
+    awards = build_awards_html(info.get("awards"))
+    if awards:
+        story.append(awards)
+    return (
+        '<div class="project-info">\n<div class="project-meta">\n{}\n</div>\n'
+        '<div class="project-story">\n{}\n</div>\n</div>'.format(
+            "\n".join(x for x in meta if x), "\n".join(story)
+        )
+    )
 
 
 def build_credits_html(info):
-    parts = []
-    for key, label in CREDIT_FIELDS:
+    rows = []
+    for key in CREDIT_FIELDS:
         value = str(info.get(key, "")).strip()
         if value:
-            parts.append(
-                '  <div class="credit"><dt>{}</dt><dd>{}</dd></div>'.format(label, esc(value))
+            rows.append(
+                '  <div class="credit"><dt>{}</dt><dd>{}</dd></div>'.format(
+                    bi(I18N["credits"][key]), credit_value(key, value)
+                )
             )
-    return "\n".join(parts)
+    return '<dl class="project-credits">\n{}\n</dl>'.format("\n".join(rows)) if rows else ""
 
 
 def build_stills_html(stills, root):
@@ -502,15 +645,15 @@ def build_contact_links_html(contact):
     if contact.get("email"):
         email = esc(contact["email"])
         rows.append(
-            '    <li><span class="contact-label">Email</span>'
-            '<a href="mailto:{0}">{0}</a></li>'.format(email)
+            '    <li><span class="contact-label">{1}</span>'
+            '<a href="mailto:{0}">{0}</a></li>'.format(email, bi(I18N["ui"]["email"]))
         )
     insta = contact.get("instagram")
     if insta:
         rows.append(
-            '    <li><span class="contact-label">Instagram</span>'
+            '    <li><span class="contact-label">{}</span>'
             '<a href="{}" target="_blank" rel="noopener">{}</a></li>'.format(
-                esc(insta["url"]), esc(insta.get("handle", insta["url"]))
+                bi(I18N["ui"]["instagram"]), esc(insta["url"]), esc(insta.get("handle", insta["url"]))
             )
         )
     return "\n".join(rows)
@@ -589,8 +732,7 @@ def main():
                 "SITE_NAME": esc(site["siteName"]),
                 "TITLE": esc(p["title"]),
                 "HERO_MEDIA_HTML": build_hero_media_html(p, "../"),
-                "INTRO_HTML": build_intro_html(p["info"].get("intro", "")),
-                "CREDITS_HTML": build_credits_html(p["info"]),
+                "INFO_HTML": build_info_html(p),
                 "STILLS_HTML": build_stills_html(p["stills"], "../"),
                 "HEAD_EXTRA": vimeo_page_extras("../", bool(p["vimeo"]))[0],
                 "VIMEO_SCRIPTS": vimeo_page_extras("../", bool(p["vimeo"]))[1],

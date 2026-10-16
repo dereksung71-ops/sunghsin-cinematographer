@@ -7,5 +7,46 @@
   "intro": "A story of a bothered teenager who turns hate into dreams of drums.",
   "order": 3,
   "vimeo": "1235832480",
-  "vimeoAspect": 1.7778
+  "vimeoAspect": 1.7778,
+  "introZh": "一個被煩惱困擾的少年，把恨意化為擊鼓的夢。",
+  "awards": [
+    {
+      "status": "selection",
+      "year": 2023,
+      "festival": {
+        "zh": "關渡電影節",
+        "en": "Kuandu Film Festival"
+      },
+      "detail": {
+        "zh": "",
+        "en": ""
+      }
+    },
+    {
+      "status": "selection",
+      "year": 2023,
+      "festival": {
+        "zh": "青春電影節",
+        "en": "Youth Film Festival"
+      },
+      "detail": {
+        "zh": "",
+        "en": ""
+      }
+    },
+    {
+      "status": "winner",
+      "year": 2023,
+      "festival": {
+        "zh": "放視大賞",
+        "en": "Vision Get Wild"
+      },
+      "detail": {
+        "zh": "影視類銀獎",
+        "en": "Silver Award, Film & TV Category"
+      }
+    }
+  ],
+  "titleZh": "白日夢",
+  "directorZh": "馮于倫"
 }
