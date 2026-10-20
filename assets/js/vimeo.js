@@ -44,6 +44,14 @@
 
         var player = new window.Vimeo.Player(iframe);
         var settled = false;
+        var started = Date.now();
+        var timeline = [];
+        ["loaded", "play", "playing", "bufferstart", "bufferend", "error"].forEach(function (name) {
+          player.on(name, function (data) {
+            var detail = name === "error" && data ? ":" + (data.name || data.message || "") : "";
+            timeline.push(name + detail + "@" + (Date.now() - started) + "ms");
+          });
+        });
         var timer = setTimeout(function () { fail(new Error("timeout")); }, timeoutMs || 7000);
 
         function fail(err) {
@@ -52,6 +60,7 @@
           clearTimeout(timer);
           try { player.destroy().catch(function () {}); } catch (e) {}
           iframe.remove();
+          err.timeline = timeline;
           reject(err);
         }
 
@@ -61,7 +70,7 @@
           if (settled) return;
           settled = true;
           clearTimeout(timer);
-          resolve({ player: player, iframe: iframe });
+          resolve({ player: player, iframe: iframe, timeline: timeline });
         }
         player.on("loaded", ok);
         player.on("play", ok);
@@ -70,7 +79,7 @@
         ["play", "playing", "timeupdate"].forEach(function (name) {
           player.on(name, function () { iframe.classList.add("is-playing"); });
         });
-        player.on("error", function () { fail(new Error("player error")); });
+        player.on("error", function (e) { fail(new Error("player error: " + ((e && (e.name || e.message)) || "unknown"))); });
       });
     });
   }

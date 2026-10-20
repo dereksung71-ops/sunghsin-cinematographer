@@ -685,13 +685,14 @@ VIMEO_CHECK_PAGE = """<!DOCTYPE html>
   #summary { margin-top: 24px; font-size: 16px; color: #fff; }
 </style></head><body>
 <h1>Vimeo 檢查頁</h1>
-<p>這一頁會逐支測試網站上用到的 Vimeo 影片能不能在「這台電腦」播放。每支最多等 12 秒，全部測完會顯示總結。
-測完請把畫面截圖給 Claude。</p>
+<p>這一頁會逐支測試網站上用到的 Vimeo 影片能不能在「這台電腦」播放。預設每支最多等 12 秒；
+網址後面加 <code>?timeout=40</code> 可以改成等 40 秒，並顯示 Vimeo 播放器每個事件發生的時間點。測完請把畫面截圖給 Claude。</p>
 <div id="summary">測試中…</div>
-<table><thead><tr><th>位置</th><th>Vimeo ID</th><th>結果</th><th>時間</th></tr></thead><tbody id="rows"></tbody></table>
+<table><thead><tr><th>位置</th><th>Vimeo ID</th><th>結果</th><th>時間 / 事件</th></tr></thead><tbody id="rows"></tbody></table>
 <script src="../assets/js/vimeo.js"></script>
 <script>
 const ITEMS = __ITEMS__;
+const LIMIT = (parseInt(new URLSearchParams(location.search).get("timeout"), 10) || 12) * 1000;
 const tbody = document.getElementById("rows"), summary = document.getElementById("summary");
 const rows = ITEMS.map(function (it) {
   const tr = document.createElement("tr");
@@ -707,13 +708,15 @@ const rows = ITEMS.map(function (it) {
     holder.style.cssText = "position:fixed;left:-9999px;top:0;width:320px;height:180px";
     document.body.appendChild(holder);
     try {
-      const r = await window.PortfolioVimeo.mount(holder, ITEMS[i][1], 12000);
+      const r = await window.PortfolioVimeo.mount(holder, ITEMS[i][1], LIMIT);
       tr.children[2].className = "ok"; tr.children[2].textContent = "✓ 正常"; ok++;
+      tr.children[3].dataset.events = (r.timeline || []).join("  ");
       try { await r.player.pause(); r.player.destroy(); } catch (e) {}
     } catch (e) {
       tr.children[2].className = "bad"; tr.children[2].textContent = "✗ 失敗（" + (e.message || "error") + "）";
+      tr.children[3].dataset.events = (e.timeline && e.timeline.length ? e.timeline.join("  ") : "（Vimeo 沒有回報任何事件）");
     }
-    tr.children[3].textContent = ((Date.now() - t0) / 1000).toFixed(1) + " 秒";
+    tr.children[3].textContent = ((Date.now() - t0) / 1000).toFixed(1) + " 秒" + (tr.children[3].dataset.events ? "　" + tr.children[3].dataset.events : "");
     holder.remove();
   }
   summary.textContent = "結果：" + ok + " / " + ITEMS.length + " 支能正常播放　（" + new Date().toLocaleString() + "）";
