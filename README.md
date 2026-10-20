@@ -108,6 +108,8 @@ player is created on the first hover and paused when you move away.
   without it, a failed Vimeo shows just the poster still.
 - The home hero works the same way: `"vimeo"` / `"vimeoAspect"` inside
   `"home"` in `data/site.json`.
+  Set `"useVimeo": false` there to play the local `"video"` file directly instead
+  (currently off for the home page); remove it, or set it to `true`, to switch back.
 - Film pages show the whole frame (never cropped); the home hero and the
   hover preview are full-bleed (cropped to fill).
 

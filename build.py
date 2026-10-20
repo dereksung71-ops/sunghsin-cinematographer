@@ -506,6 +506,10 @@ def build_hero_media_html(p, root):
     return ""
 
 
+def home_uses_vimeo(home):
+    return bool(home.get("vimeo")) and home.get("useVimeo", True)
+
+
 def build_home_media_html(home):
     """Home hero (page lives at the site root, so paths need no prefix)."""
     video_path = home.get("video", "").lstrip("/")
@@ -519,7 +523,7 @@ def build_home_media_html(home):
             print("  note: home video not found at the configured path; using {}".format(video_path))
     has_video = bool(video_path) and (ASSETS_DIR.parent / video_path).exists()
     fallback = {"src": video_path, "type": "video/mp4"} if has_video else None
-    vimeo = parse_vimeo(home.get("vimeo"), home.get("vimeoAspect"))
+    vimeo = parse_vimeo(home.get("vimeo"), home.get("vimeoAspect")) if home.get("useVimeo", True) else None
     if vimeo:
         return '<div class="home-vimeo vimeo-cover vimeo-auto" {attrs}>{img}</div>'.format(
             attrs=vimeo_attrs(vimeo, fallback, ""), img=poster_img(poster, "")
@@ -773,8 +777,8 @@ def main():
             "ROOT": "",
             "SITE_NAME": esc(site["siteName"]),
             "HERO_MEDIA_HTML": build_home_media_html(site["home"]),
-            "HEAD_EXTRA": vimeo_page_extras("", bool(site["home"].get("vimeo")))[0],
-            "VIMEO_SCRIPTS": vimeo_page_extras("", bool(site["home"].get("vimeo")))[1],
+            "HEAD_EXTRA": vimeo_page_extras("", home_uses_vimeo(site["home"]))[0],
+            "VIMEO_SCRIPTS": vimeo_page_extras("", home_uses_vimeo(site["home"]))[1],
         }),
     )
 

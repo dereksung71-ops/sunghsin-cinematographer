@@ -1,10 +1,11 @@
 {
   "siteName": "Sung Hsin / Cinematographer",
   "home": {
-    "video": "/assets/videos/home/hero.mp4",
+    "video": "/assets/videos/home/hero_1.mp4",
     "poster": "/assets/images/home/hero-poster.jpg",
     "vimeo": "1236514083",
-    "vimeoAspect": 1.7778
+    "vimeoAspect": 1.7778,
+    "useVimeo": false
   },
   "contact": {
     "image": "/assets/images/contact/background.jpg",
