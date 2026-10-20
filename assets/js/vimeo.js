@@ -44,7 +44,7 @@
 
         var player = new window.Vimeo.Player(iframe);
         var settled = false;
-        var timer = setTimeout(function () { fail(new Error("timeout")); }, timeoutMs || 10000);
+        var timer = setTimeout(function () { fail(new Error("timeout")); }, timeoutMs || 7000);
 
         function fail(err) {
           if (settled) return;

@@ -239,8 +239,10 @@ def discover_projects():
                 )
 
             if len(videos) > 1:
+                # A file named video/trailer wins; otherwise the most recently added one.
                 preferred = [v for v in videos if v.stem.lower() in ("video", "trailer")]
-                videos = preferred + [v for v in videos if v not in preferred]
+                rest = sorted((v for v in videos if v not in preferred), key=lambda v: -v.stat().st_mtime)
+                videos = preferred + rest
                 print("  note: {} has {} videos; using '{}' (name the one you want 'video.mp4')".format(
                     film_dir.relative_to(ASSETS_DIR), len(videos), videos[0].name))
             if not videos:
@@ -508,6 +510,13 @@ def build_home_media_html(home):
     """Home hero (page lives at the site root, so paths need no prefix)."""
     video_path = home.get("video", "").lstrip("/")
     poster = home.get("poster", "").lstrip("/")
+    if video_path and not (ASSETS_DIR.parent / video_path).exists():
+        # The configured file is missing (renamed?): use whatever video sits in that folder.
+        folder = (ASSETS_DIR.parent / video_path).parent
+        found = sorted(f for f in folder.glob("*") if f.suffix.lower() in VIDEO_TYPES) if folder.is_dir() else []
+        if found:
+            video_path = found[0].relative_to(ASSETS_DIR.parent).as_posix()
+            print("  note: home video not found at the configured path; using {}".format(video_path))
     has_video = bool(video_path) and (ASSETS_DIR.parent / video_path).exists()
     fallback = {"src": video_path, "type": "video/mp4"} if has_video else None
     vimeo = parse_vimeo(home.get("vimeo"), home.get("vimeoAspect"))
