@@ -668,6 +668,71 @@ def build_contact_links_html(contact):
     return "\n".join(rows)
 
 
+VIMEO_CHECK_PAGE = """<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Vimeo check</title>
+<style>
+  body { margin: 0; padding: 40px 24px; background: #000; color: #ddd; font: 14px/1.6 -apple-system, "PingFang TC", "Helvetica Neue", sans-serif; }
+  h1 { margin: 0 0 6px; font-size: 20px; font-weight: 400; color: #fff; }
+  p { max-width: 640px; color: #999; }
+  table { border-collapse: collapse; margin-top: 24px; width: 100%; max-width: 760px; }
+  td, th { padding: 9px 12px; border-bottom: 1px solid #222; text-align: left; }
+  th { color: #777; font-weight: 400; font-size: 12px; }
+  .ok { color: #7ddf8a; } .bad { color: #ff7b7b; } .wait { color: #999; }
+  a { color: #8ab4ff; }
+  #summary { margin-top: 24px; font-size: 16px; color: #fff; }
+</style></head><body>
+<h1>Vimeo 檢查頁</h1>
+<p>這一頁會逐支測試網站上用到的 Vimeo 影片能不能在「這台電腦」播放。每支最多等 12 秒，全部測完會顯示總結。
+測完請把畫面截圖給 Claude。</p>
+<div id="summary">測試中…</div>
+<table><thead><tr><th>位置</th><th>Vimeo ID</th><th>結果</th><th>時間</th></tr></thead><tbody id="rows"></tbody></table>
+<script src="../assets/js/vimeo.js"></script>
+<script>
+const ITEMS = __ITEMS__;
+const tbody = document.getElementById("rows"), summary = document.getElementById("summary");
+const rows = ITEMS.map(function (it) {
+  const tr = document.createElement("tr");
+  tr.innerHTML = '<td></td><td><a target="_blank" rel="noopener" href="https://vimeo.com/' + it[1] + '">' + it[1] + '</a></td><td class="wait">等待中</td><td></td>';
+  tr.children[0].textContent = it[0]; tbody.appendChild(tr); return tr;
+});
+(async function () {
+  let ok = 0;
+  for (let i = 0; i < ITEMS.length; i++) {
+    const tr = rows[i], t0 = Date.now();
+    tr.children[2].textContent = "測試中…";
+    const holder = document.createElement("div");
+    holder.style.cssText = "position:fixed;left:-9999px;top:0;width:320px;height:180px";
+    document.body.appendChild(holder);
+    try {
+      const r = await window.PortfolioVimeo.mount(holder, ITEMS[i][1], 12000);
+      tr.children[2].className = "ok"; tr.children[2].textContent = "✓ 正常"; ok++;
+      try { await r.player.pause(); r.player.destroy(); } catch (e) {}
+    } catch (e) {
+      tr.children[2].className = "bad"; tr.children[2].textContent = "✗ 失敗（" + (e.message || "error") + "）";
+    }
+    tr.children[3].textContent = ((Date.now() - t0) / 1000).toFixed(1) + " 秒";
+    holder.remove();
+  }
+  summary.textContent = "結果：" + ok + " / " + ITEMS.length + " 支能正常播放　（" + new Date().toLocaleString() + "）";
+})();
+</script></body></html>
+"""
+
+
+def write_vimeo_check(site, projects):
+    items = []
+    if site.get("home", {}).get("vimeo"):
+        items.append(["首頁 Home", str(site["home"]["vimeo"])])
+    for p in projects:
+        if p["vimeo"]:
+            items.append([p["title"], p["vimeo"]["id"]])
+    page = VIMEO_CHECK_PAGE.replace("__ITEMS__", json.dumps(items, ensure_ascii=False))
+    write(DIST_DIR / "vimeo-check" / "index.html", page)
+
+
 def copy_site_assets():
     """Copy css/js/images/videos, but not the film folders (those are published
     separately, renamed, under dist/media/)."""
@@ -748,6 +813,7 @@ def main():
             }),
         )
 
+    write_vimeo_check(site, projects)
     print("Built {} film page(s) into {}".format(len(projects), DIST_DIR))
     for p in projects:
         print("  /{}/  [{}]  {} stills".format(p["slug"], p["category_label"], len(p["stills"])))
